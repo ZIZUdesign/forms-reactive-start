@@ -8,8 +8,10 @@ import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 })
 export class AppComponent implements OnInit {
   genders = ['male', 'female'];
-
   signupForm: FormGroup;
+  forbiddenUsernames = ['Chris', 'Anna'];
+
+  
   
   ngOnInit(){
     // this is the form we create 
@@ -19,7 +21,8 @@ export class AppComponent implements OnInit {
     // name for the control. 
     this.signupForm = new FormGroup({
       'userData': new FormGroup({
-        'username': new FormControl(null, Validators.required),
+         // we need to bind the 'this' key word. this is because we dont call this here but angular which does
+        'username': new FormControl(null, [Validators.required, this.forbiddenNames.bind(this)]),
         'email': new FormControl(null, [Validators.required, Validators.email]),
       }),
      
@@ -38,4 +41,15 @@ export class AppComponent implements OnInit {
     (<FormArray>this.signupForm.get('hobbies')).push(control); 
 
   }
+
+  // custom validator 
+  forbiddenNames (control: FormControl ): {[s: string] : boolean }{
+    if (this.forbiddenUsernames.indexOf(control.value) !== -1 ){
+      return {'nameIsForbidden': true}; 
+    }
+    // NB: Dont pass {'nameIsForbidden' : false} looks right but this wont work
+    return null; 
+  }
+
+
 }
