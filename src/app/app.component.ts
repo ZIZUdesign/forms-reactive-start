@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -30,10 +31,28 @@ export class AppComponent implements OnInit {
       'hobbies': new FormArray([])
 
     });
+
+    this.signupForm.setValue({
+      'userData': {
+        'username': 'Zeray',
+        'email': 'zerfine@yahoo.com'
+      },
+      'gender': 'male',
+      'hobbies': ['Football','Cooking']
+    }); 
+    this.signupForm.patchValue({
+      'userData': {
+        'username': 'Zeray',
+        'email': 'zerfine@yahoo.com'
+      },
+      'gender': 'male',
+      'hobbies': ['Football','Cooking']
+    }); 
   }
 
   onSubmit(){
     console.log(this.signupForm)
+    this.signupForm.reset();
   }
 
   onAddHobby(){
@@ -47,9 +66,24 @@ export class AppComponent implements OnInit {
     if (this.forbiddenUsernames.indexOf(control.value) !== -1 ){
       return {'nameIsForbidden': true}; 
     }
-    // NB: Dont pass {'nameIsForbidden' : false} looks right but this wont work
+    // NB: Don't pass {'nameIsForbidden' : false} looks right but this won't work
     return null; 
   }
+
+  forbiddenEmails(controls: FormControl) : Promise<any> | Observable<any> {
+    const promise = new Promise<any>((resolve, reject ) => {
+          setTimeout( () => {
+            if(controls.value === 'test@test.com'){
+              resolve({'emailIsForbidden': true});
+            }else {
+              resolve(null);
+            }
+          }, 1500);
+    });
+    return promise; 
+  }
+
+ 
 
 
 }
